@@ -12,6 +12,11 @@ let user = {
 	nombre: ''
 }
 
+
+function capitalize(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function enviar(event) {
 	event.preventDefault()
 	if (mensaje.value != "") {
@@ -26,7 +31,7 @@ function enviar(event) {
 
 document.getElementById('saveUsername').addEventListener('click', (e) => {
 	e.preventDefault();
-	user.nombre = username.value;
+	user.nombre = capitalize(username.value.toLowerCase());
 	username.setAttribute('disabled', true);
 	e.target.style = 'display:none';
 	chat.classList.remove("d-none");
@@ -52,7 +57,7 @@ mensaje.addEventListener("keydown", event => {
 socket.on('chat:ingreso', (datos) => {
 	console.log(datos);
 
-	/* conectados.innerHTML = "";
+	conectados.innerHTML = "";
 	datos.forEach(element => {
 		conectados.innerHTML += `
 			<li class="media">
@@ -62,7 +67,7 @@ socket.on('chat:ingreso', (datos) => {
 				</div>
 			</li>
 		`;
-	}); */
+	});
 });
 
 socket.once('chat:usuario', (datos) => {

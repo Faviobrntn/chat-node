@@ -34,9 +34,13 @@ io.on('connection', (socket) => {
     });
     
     socket.on('chat:ingreso', (datos) => {
-        conectados.push({nombre: datos.nombre});
-        socket.broadcast.emit('chat:ingreso', conectados);
-        console.log(conectados);
+        conectados.push({id: socket.id, nombre: datos.nombre});
+        // socket.broadcast.emit('chat:ingreso', conectados);
+        io.emit('chat:ingreso', conectados.map(function(obj){
+            var rObj = {};
+            rObj["nombre"] = obj.nombre;
+            return rObj;
+        }));
     });
 
     socket.on('chat:mensaje', (datos) => {
@@ -50,4 +54,21 @@ io.on('connection', (socket) => {
     socket.on('chat:escribiendo', (datos) => {
         socket.broadcast.emit('chat:escribiendo', datos);
     });
-})
+    
+    
+    socket.on("disconnect", (reason) => {
+        console.log("Desconectado el Socket: ", socket.id);
+        console.log("Razón:", reason); // "ping timeout"
+
+        let id = conectados.findIndex((obj) => {
+            return obj.id == socket.id;
+        });
+        conectados.splice(id, 1);
+
+        io.emit('chat:ingreso', conectados.map(function(obj){
+            var rObj = {};
+            rObj["nombre"] = obj.nombre;
+            return rObj;
+        }));
+    });
+});
