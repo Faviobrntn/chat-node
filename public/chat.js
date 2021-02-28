@@ -19,6 +19,7 @@ function capitalize(str) {
 
 function enviar(event) {
 	event.preventDefault()
+	mensaje.value = mensaje.value.trim();
 	if (mensaje.value != "") {
 		socket.emit('chat:mensaje', {
 			nombre: user.nombre,
@@ -31,13 +32,18 @@ function enviar(event) {
 
 document.getElementById('saveUsername').addEventListener('click', (e) => {
 	e.preventDefault();
-	user.nombre = capitalize(username.value.toLowerCase());
-	username.setAttribute('disabled', true);
-	e.target.style = 'display:none';
-	chat.classList.remove("d-none");
+	username.value = username.value.trim();
+	if (username.value != "") {
+		user.nombre = capitalize(username.value.toLowerCase());
+		username.setAttribute('disabled', true);
+		e.target.style = 'display:none';
+		chat.classList.remove("d-none");
 
-	document.getElementById('listadoConectados').classList.remove("d-none");
-	socket.emit('chat:ingreso', user);
+		document.getElementById('listadoConectados').classList.remove("d-none");
+		socket.emit('chat:ingreso', user);
+	}else{
+		alert("Debe ingresar un nombre de usuario");
+	}
 });
 document.getElementById('chatEnviar').addEventListener('click', enviar);
 
